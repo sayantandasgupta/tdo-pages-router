@@ -1,18 +1,34 @@
+'use client'
+
 import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { lusitana } from "@/pages/ui/fonts";
 import { Button } from "@/pages/ui/button";
 import Link from "next/link";
-import { useActionState } from "react";
-// import { authenticate, State } from "@/app/lib/actions";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-
-// const initialState: State = {
-//     message: '',
-// }
+import { signIn } from "next-auth/react";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function LoginForm() {
 
     // const [errorMessage, formAction, isPending] = useActionState(authenticate, initialState);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const router = useRouter();
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        const result = await signIn("credentials", {
+            redirect: false,
+            email,
+            password
+        });
+
+        if (result?.ok) {
+            router.push('/dashboard');
+        } else {
+            alert('Invalid Credentials');
+        }
+    }
 
     return (
         <div className={`${lusitana.className} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8`}>
@@ -26,7 +42,7 @@ export default function LoginForm() {
                     </h2>
                 </div>
 
-                <form className="mt-8 space-y-6">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                     <div className="flex flex-col gap-4">
                         <div>
                             <label htmlFor="email" className="sr-only">
@@ -40,6 +56,9 @@ export default function LoginForm() {
                                 required
                                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Email Address*"
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                }}
                                 aria-required
                             />
                         </div>
@@ -55,6 +74,9 @@ export default function LoginForm() {
                                 required
                                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Password*"
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                }}
                                 aria-required
                             />
                         </div>
