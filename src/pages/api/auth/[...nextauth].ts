@@ -10,7 +10,7 @@ export const authOptions = {
                 password: { label: 'Password', type: 'password' }
             },
             authorize(credentials, req) {
-                const user = { id: 1, email: 'johndoe@gmail.com', password: 'johndoe@123' };
+                const user = { email: 'johndoe@gmail.com', password: 'johndoe@123' };
 
                 if (user) {
                     return Promise.resolve(user);
