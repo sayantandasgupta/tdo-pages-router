@@ -1,5 +1,5 @@
-import AppIcon from "@/pages/ui/app-logo";
-import RegisterForm from "@/pages/ui/register/register-form";
+import AppIcon from "@/components/app-logo";
+import RegisterForm from "@/components/register/register-form";
 
 
 export default function RegisterPage() {

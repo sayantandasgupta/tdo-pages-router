@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { fetchUserByEmail } from "@/lib/data";
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions);
 
     if (!session) {
@@ -27,7 +27,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
             }
         })
 
-        res.status(200).json({ message: "All Tasks", data: { ...tasks } })
+        res.status(200).json({ message: "All Tasks", data: tasks })
     } catch (error) {
         console.error("Failed to fetch all tasks", error);
         res.status(500).json({ message: "Internal Server Error" });

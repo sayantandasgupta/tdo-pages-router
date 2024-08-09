@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { lusitana } from "@/pages/ui/fonts";
-import AppIcon from "@/pages/ui/app-logo";
+import { lusitana } from "@/components/fonts";
+import AppIcon from "@/components/app-logo";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 

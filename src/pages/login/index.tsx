@@ -1,5 +1,5 @@
-import AppIcon from '@/pages/ui/app-logo';
-import LoginForm from '@/pages/ui/login/login-form';
+import AppIcon from '@/components/app-logo';
+import LoginForm from '@/components/login/login-form';
 
 export default function LoginPage() {
     return (

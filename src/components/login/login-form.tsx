@@ -1,40 +1,32 @@
 'use client'
 
-import { LockClosedIcon } from '@heroicons/react/24/solid';
-import Link from 'next/link';
-import { lusitana } from '@/pages/ui/fonts';
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Button } from '@/pages/ui/button';
-import { revalidatePath } from 'next/cache';
+import { LockClosedIcon } from "@heroicons/react/24/solid";
+import { lusitana } from "@/components/fonts";
+import { Button } from "@/components/button";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/router";
 
-// const initialState: State = {
-//     message: '',
-// }
+export default function LoginForm() {
 
-export default function RegisterForm() {
-
-    const [name, setName] = useState('');
+    // const [errorMessage, formAction, isPending] = useActionState(authenticate, initialState);
     const [email, setEmail] = useState('');
-    const [password, setPass] = useState('');
+    const [password, setPassword] = useState('');
     const router = useRouter();
 
-    const registerUser = async (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-
-        const body = { name, email, password };
-
-        const res = await fetch(`/api/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
+        const result = await signIn("credentials", {
+            redirect: false,
+            email,
+            password
         });
 
-        switch (res.status) {
-            case 200: router.push('/login');
-                alert("Registered. Now Login bitch!")
-                break;
-            default: alert(res)
+        if (result?.ok) {
+            router.push('/dashboard');
+        } else {
+            alert('Invalid Credentials');
         }
     }
 
@@ -46,26 +38,12 @@ export default function RegisterForm() {
                         <LockClosedIcon className="h-6 w-6 text-white" aria-hidden="true" />
                     </div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Sign Up
+                        Login
                     </h2>
                 </div>
 
-                <form onSubmit={registerUser} className="mt-8 space-y-6">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                     <div className="flex flex-col gap-4">
-                        <div>
-                            <label htmlFor="name" className='sr-only'>
-                                Name
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                id="name"
-                                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Name*"
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                            />
-                        </div>
                         <div>
                             <label htmlFor="email" className="sr-only">
                                 Email Address
@@ -78,7 +56,9 @@ export default function RegisterForm() {
                                 required
                                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Email Address*"
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                }}
                                 aria-required
                             />
                         </div>
@@ -94,7 +74,9 @@ export default function RegisterForm() {
                                 required
                                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Password*"
-                                onChange={(e) => setPass(e.target.value)}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                }}
                                 aria-required
                             />
                         </div>
@@ -102,20 +84,33 @@ export default function RegisterForm() {
                     <div>
                         <Button
                             type="submit"
+                            // aria-disabled={isPending}
                             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
-                            Register
+                            Login
                         </Button>
+                        {/* <div
+                            className="flex h-8 items-end space-x-1"
+                            aria-live="polite"
+                            aria-atomic="true"
+                        >
+                            {errorMessage && (
+                                <>
+                                    <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                                    <p className="text-sm text-red-500">{errorMessage}</p>
+                                </>
+                            )}
+                        </div> */}
                     </div>
                     <div className="flex justify-end">
                         <div className="text-sm">
-                            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                                Already have an account? Login
+                            <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                                {"Don\'t have an account? Register Here"}
                             </Link>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    );
+    )
 }

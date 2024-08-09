@@ -1,12 +1,15 @@
 import NextAuth from "next-auth/next";
-import Credentials from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { compare } from "bcrypt";
+import { fetchUserByEmail } from "@/lib/data";
+import { NextAuthOptions } from "next-auth";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
-        Credentials({
+        CredentialsProvider({
+            name: "Credentials",
             credentials: {
                 email: { label: 'Email', type: 'email', placeholder: "johndoe@email.com" },
                 password: { label: 'Password', type: 'password' }
@@ -14,11 +17,7 @@ export const authOptions = {
             async authorize(credentials, req) {
                 const { email, password } = credentials as { email: string, password: string };
 
-                const user = await prisma.user.findFirst({
-                    where: {
-                        email: email,
-                    }
-                });
+                const user = await fetchUserByEmail(email);
 
                 if (!user) return Promise.resolve(null);
 
@@ -38,6 +37,9 @@ export const authOptions = {
         signIn: '/login'
     },
     adapter: PrismaAdapter(prisma),
+    session: {
+        strategy: "jwt",
+    }
 }
 
 export default NextAuth(authOptions);
